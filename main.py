@@ -11,12 +11,15 @@ class Jogo():
         pygame.init()
         self.running = True
         self.tamanho = tamanho_tela
+        self.pontuacao = 0
+        self.sweetspot = 0
         self.superficie = pygame.display.set_mode(
             size = self.tamanho,
             display = 0
         )
         pygame.display.set_caption('exergamejam')
         self.fundo = (0,0,0)
+        self.fonte = pygame.font.SysFont('aakar', 35) # essa fonte NÃO funciona no windows
 
         self.imagemEsteira = pygame.image.load(os.path.join(path_assets, 'esteira-resize.png'))
         self.imagemMoldura = pygame.image.load(os.path.join(path_assets, 'fundo.png'))
@@ -24,7 +27,8 @@ class Jogo():
 
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, 'snd_dumbvictory.wav'))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, 'snd_hurt1.wav'))
-        self.nomeMusica = 'Time Fcuk.mp3'
+        self.nomeMusica = 'sangueferve.mp3'
+        # self.nomeMusica = 'timmaia.mp3'
 
         #  N
         # O L
@@ -59,7 +63,7 @@ class Jogo():
             number = 4
         )
         
-        self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 3)
+        self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 2)
 
         # self.somCorreto = pygame.mixer.Sound(os.path.join(path_assets, ''))
     
@@ -95,17 +99,20 @@ class Jogo():
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
                 # Deu boa :D
-                self.somCerto.play()
+                # self.somCerto.play()
+                self.pontuacao += 5
                 self.next.reset()
             elif input != 0:
                 # Deu ruim D:
-                self.somErrado.play()
+                # self.somErrado.play()
+                pass
             input = 0
 
 
             # ----- Render -----
             self.superficie.fill((self.fundo))
             self.superficie.blit(self.imagemMoldura, (0,0))
+            self.superficie.blit(self.fonte.render(f'Pontuação: {self.pontuacao}', True,(255,255,255)), (25,25))
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
             # self.superficie.blit(self.imagemKairos, (tamanho_tela[0]//2-135,400))
 
