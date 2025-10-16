@@ -72,16 +72,7 @@ class Jogo():
         # self.somCorreto = pygame.mixer.Sound(os.path.join(path_assets, ''))
     
     def run(self):
-        # Mainloop
-        def getCollisionFlechas(rect: pygame.rect.Rect):
-            '''
-                Função para verificar se a flecha está selecionada
-            '''
-            if rect.collidepoint(pygame.mouse.get_pos()):
-                return (239, 215, 111) # Amarelo claro
-            else:
-                return (0,0,0)
-            
+        # Mainloop            
         input = 0
         relogio = pygame.time.Clock()
         
@@ -108,10 +99,6 @@ class Jogo():
             elif self.flechaSL.update() != 0:
                 input = self.flechaSL.number # 4
             
-            self.corApertandoNO = getCollisionFlechas(self.flechaNO.rect)
-            self.corApertandoSO = getCollisionFlechas(self.flechaSO.rect)
-            self.corApertandoSL = getCollisionFlechas(self.flechaSL.rect)
-            self.corApertandoNL = getCollisionFlechas(self.flechaNL.rect)
 
             self.next.update()
             # Verifica se foi apertado o botão certo
@@ -140,11 +127,6 @@ class Jogo():
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
             # self.superficie.blit(self.imagemKairos, (tamanho_tela[0]//2-135,400))
             
-
-            pygame.draw.rect(self.superficie, self.corApertandoNO, (self.flechaNO.rect.x, self.flechaNO.rect.y,128,128))
-            pygame.draw.rect(self.superficie, self.corApertandoSO, (self.flechaSO.rect.x, self.flechaSO.rect.y,128,128))
-            pygame.draw.rect(self.superficie, self.corApertandoSL, (self.flechaSL.rect.x, self.flechaSL.rect.y,128,128))
-            pygame.draw.rect(self.superficie, self.corApertandoNL, (self.flechaNL.rect.x, self.flechaNL.rect.y,128,128))
 
             self.flechaNO.render(self.superficie)
             self.flechaNL.render(self.superficie)
