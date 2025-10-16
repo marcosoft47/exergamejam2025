@@ -1,6 +1,6 @@
 import pygame
 import random
-from settings import tamanho_tela, path_assets
+from settings import path_assets
 from os.path import join
 
 class Sequencia():

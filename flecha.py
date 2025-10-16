@@ -1,6 +1,4 @@
 import pygame
-import os.path
-from settings import path_assets
 #button class
 class Flecha():
 	def __init__(self, x: int, y: int, image: pygame.surface.Surface, number: int, scale=0.5):
@@ -12,7 +10,7 @@ class Flecha():
 		self.rect.topleft = (x, y)
 		self.clicked = False
 
-	def update(self, surface: pygame.surface.Surface) -> int:
+	def update(self) -> int:
 		#get mouse position
 		pos = pygame.mouse.get_pos()
 

@@ -62,6 +62,10 @@ class Jogo():
             image = pygame.image.load(os.path.join(path_assets, 'seta_espadas.png')), 
             number = 4
         )
+        self.corApertandoNO = (0,0,0)
+        self.corApertandoSO = (0,0,0)
+        self.corApertandoSL = (0,0,0)
+        self.corApertandoNL = (0,0,0)
         
         self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 2)
 
@@ -69,6 +73,15 @@ class Jogo():
     
     def run(self):
         # Mainloop
+        def getCollisionFlechas(rect: pygame.rect.Rect):
+            '''
+                Função para verificar se a flecha está selecionada
+            '''
+            if rect.collidepoint(pygame.mouse.get_pos()):
+                return (239, 215, 111) # Amarelo claro
+            else:
+                return (0,0,0)
+            
         input = 0
         relogio = pygame.time.Clock()
         
@@ -84,18 +97,23 @@ class Jogo():
                     if e.key == K_ESCAPE:
                         self.running = False
             
+
             # ----- Update -----
-            if self.flechaNO.update(self.superficie) != 0:
+            if self.flechaNO.update() != 0:
                 input = self.flechaNO.number # 1
-            elif self.flechaNL.update(self.superficie) != 0:
+            elif self.flechaNL.update() != 0:
                 input = self.flechaNL.number # 2
-            elif self.flechaSO.update(self.superficie) != 0:
+            elif self.flechaSO.update() != 0:
                 input = self.flechaSO.number # 3
-            elif self.flechaSL.update(self.superficie) != 0:
+            elif self.flechaSL.update() != 0:
                 input = self.flechaSL.number # 4
+            
+            self.corApertandoNO = getCollisionFlechas(self.flechaNO.rect)
+            self.corApertandoSO = getCollisionFlechas(self.flechaSO.rect)
+            self.corApertandoSL = getCollisionFlechas(self.flechaSL.rect)
+            self.corApertandoNL = getCollisionFlechas(self.flechaNL.rect)
 
             self.next.update()
-
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
                 # Deu boa :D
@@ -121,6 +139,12 @@ class Jogo():
             self.superficie.blit(self.fonte.render(f'Pontuação: {self.pontuacao}', True,(255,255,255)), (25,25))
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
             # self.superficie.blit(self.imagemKairos, (tamanho_tela[0]//2-135,400))
+            
+
+            pygame.draw.rect(self.superficie, self.corApertandoNO, (self.flechaNO.rect.x, self.flechaNO.rect.y,128,128))
+            pygame.draw.rect(self.superficie, self.corApertandoSO, (self.flechaSO.rect.x, self.flechaSO.rect.y,128,128))
+            pygame.draw.rect(self.superficie, self.corApertandoSL, (self.flechaSL.rect.x, self.flechaSL.rect.y,128,128))
+            pygame.draw.rect(self.superficie, self.corApertandoNL, (self.flechaNL.rect.x, self.flechaNL.rect.y,128,128))
 
             self.flechaNO.render(self.superficie)
             self.flechaNL.render(self.superficie)
