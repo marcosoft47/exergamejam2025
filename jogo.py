@@ -99,12 +99,18 @@ class Jogo():
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
                 # Deu boa :D
-                # self.somCerto.play()
-                self.pontuacao += 5
+                if 10 <= self.next.rect.y < 40:
+                    self.pontuacao += 1
+                elif 40 <= self.next.rect.y <= 60 or self.next.rect.y > 80:
+                    self.pontuacao += 5
+                elif 60 < self.next.rect.y <= 80:
+                    self.pontuacao += 10
+                    self.somCerto.play()
+                print(self.next.rect.y)
                 self.next.reset()
             elif input != 0:
                 # Deu ruim D:
-                # self.somErrado.play()
+                self.somErrado.play()
                 pass
             input = 0
 
