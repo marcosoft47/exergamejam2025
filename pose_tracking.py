@@ -114,12 +114,12 @@ class PoseTracking:
             self.pose_detected = True
 
             self.feet1_x, self.feet1_y = (
-                self.results.pose_landmarks.landmark[30].x,
-                self.results.pose_landmarks.landmark[30].y,
+                self.results.pose_landmarks.landmark[28].x,
+                self.results.pose_landmarks.landmark[28].y,
             )  # left_heel
             self.feet2_x, self.feet2_y = (
-                self.results.pose_landmarks.landmark[29].x,
-                self.results.pose_landmarks.landmark[29].y,
+                self.results.pose_landmarks.landmark[27].x,
+                self.results.pose_landmarks.landmark[27].y,
             )  # right_heel
 
             # Ponto medio entre os pes
@@ -137,9 +137,6 @@ class PoseTracking:
             debug = self.debug_counter % 60 == 0
 
             self.feet_x, self.feet_y = posicao(x, y, debug=debug)
-            self.feet_y = (
-                SCREEN_HEIGHT - 50
-            )  # Jogador deve se mover apenas lateralmente
 
             mp_drawing.draw_landmarks(
                 image,

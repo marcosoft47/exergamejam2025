@@ -139,8 +139,8 @@ class Jogo:
         )
 
         # Disabled for now
-        # ranking_button_disabled = self.rankingButtonAsset.copy()
-        # ranking_button_disabled.set_alpha(100)
+        ranking_button_disabled = self.rankingButtonAsset.copy()
+        ranking_button_disabled.set_alpha(100)
 
         while in_menu and self.running:
             clock.tick(fps)
@@ -166,6 +166,11 @@ class Jogo:
                 f"Left: ({left_foot_x}, {left_foot_y}) raw:{raw_l} | "
                 f"Right: ({right_foot_x}, {right_foot_y}) raw:{raw_r}"
             )
+
+            # Check if feet center is over start button
+            if x is not None and y is not None:
+                if start_button_rect.collidepoint(x, y):
+                    in_menu = False
 
             for e in pygame.event.get():
                 if e.type == pygame.MOUSEBUTTONDOWN:
@@ -242,15 +247,38 @@ class Jogo:
                     if e.key == K_ESCAPE:
                         self.running = False
 
+            # ----- Update camera and feet position -----
+            self.load_camera()
+            self.get_feet_position()
+            self.cap.display_camera()
+
+            left_foot_x, left_foot_y = self.pose_tracking.get_left_foot()
+            right_foot_x, right_foot_y = self.pose_tracking.get_right_foot()
+
             # ----- Update -----
+            # Check mouse input (original)
             if self.flechaNO.update() != 0:
                 input = self.flechaNO.number  # 1
             elif self.flechaNL.update() != 0:
-                input = self.flechaNL.number  # 2
+                input = self.flechaNL.number  # 4
             elif self.flechaSO.update() != 0:
-                input = self.flechaSO.number  # 3
+                input = self.flechaSO.number  # 2
             elif self.flechaSL.update() != 0:
-                input = self.flechaSL.number  # 4
+                input = self.flechaSL.number  # 3
+
+            # Check feet input (new - alternative)
+            if input == 0:
+                # Check left foot
+                left_foot_input = self.check_foot_on_arrow(left_foot_x, left_foot_y)
+                if left_foot_input != 0:
+                    input = left_foot_input
+                else:
+                    # Check right foot
+                    right_foot_input = self.check_foot_on_arrow(
+                        right_foot_x, right_foot_y
+                    )
+                    if right_foot_input != 0:
+                        input = right_foot_input
 
             self.next.update(dt)
             # Verifica se foi apertado o botão certo
@@ -308,6 +336,34 @@ class Jogo:
 
             self.next.render(self.superficie)
 
+            # Draw feet circles
+            x, y = self.pose_tracking.get_feet_center()
+            if left_foot_x is not None and left_foot_y is not None:
+                # Blue filled circle for left foot
+                pygame.draw.circle(
+                    self.superficie,
+                    (0, 0, 255),
+                    (int(left_foot_x), int(left_foot_y)),
+                    30,
+                    0,
+                )
+
+            if right_foot_x is not None and right_foot_y is not None:
+                # Red filled circle for right foot
+                pygame.draw.circle(
+                    self.superficie,
+                    (255, 0, 0),
+                    (int(right_foot_x), int(right_foot_y)),
+                    30,
+                    0,
+                )
+
+            if x is not None and y is not None:
+                # Green filled circle for center
+                pygame.draw.circle(
+                    self.superficie, (0, 255, 0), (int(x), int(y)), 35, 0
+                )
+
             pygame.display.update()
 
     def load_camera(self):
@@ -316,6 +372,24 @@ class Jogo:
     def get_feet_position(self):
         self.cap.frame = self.pose_tracking.scan_feets(self.cap.frame)
         return self.pose_tracking.get_feet_center()
+
+    def check_foot_on_arrow(self, foot_x, foot_y):
+        """Check if a foot is over any arrow and return the arrow number (1-4) or 0"""
+        if foot_x is None or foot_y is None:
+            return 0
+
+        foot_point = (foot_x, foot_y)
+
+        if self.flechaNO.rect.collidepoint(foot_point):
+            return self.flechaNO.number  # 1
+        elif self.flechaNL.rect.collidepoint(foot_point):
+            return self.flechaNL.number  # 4
+        elif self.flechaSO.rect.collidepoint(foot_point):
+            return self.flechaSO.number  # 2
+        elif self.flechaSL.rect.collidepoint(foot_point):
+            return self.flechaSL.number  # 3
+
+        return 0
 
 
 if __name__ == "__main__":
