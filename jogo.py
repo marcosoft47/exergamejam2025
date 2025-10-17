@@ -9,14 +9,17 @@ from settings import path_assets, tamanho_tela
 class Jogo():
     def __init__(self):
         pygame.init()
+
         self.running = True
         self.tamanho = tamanho_tela
-        self.pontuacao = 0
-        self.sweetspot = 0
+        self.points = 0
+        self.score = 0
+        self.feedback = None
         self.superficie = pygame.display.set_mode(
             size = self.tamanho,
             display = 0
         )
+
         pygame.display.set_caption('exergamejam')
         self.fundo = (0,0,0)
         self.fonte = pygame.font.SysFont('aakar', 35) # essa fonte NÃO funciona no windows
@@ -28,54 +31,57 @@ class Jogo():
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, 'snd_dumbvictory.wav'))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, 'snd_hurt1.wav'))
         self.nomeMusica = 'sangueferve.mp3'
-        # self.nomeMusica = 'timmaia.mp3'
+        self.nomeMusica = 'timmaia.mp3'
 
         #  N
         # O L
         #  S
-        
+
         __N = 220
         __S = 450
         __L = 490
         __O = 180
         self.flechaNO = flecha.Flecha(
-            x = __O, 
-            y = __N, 
+            x = __O,
+            y = __N,
             image = pygame.image.load(os.path.join(path_assets, 'seta_copas.png')),
             number = 1
         )
         self.flechaSO = flecha.Flecha(
             x = __O,
-            y = __S, 
+            y = __S,
             image = pygame.image.load(os.path.join(path_assets, 'seta_paus.png')),
             number = 2
         )
         self.flechaSL = flecha.Flecha(
             x = __L,
-            y = __S, 
-            image = pygame.image.load(os.path.join(path_assets, 'seta_ouros.png')), 
+            y = __S,
+            image = pygame.image.load(os.path.join(path_assets, 'seta_ouros.png')),
             number = 3
         )
         self.flechaNL = flecha.Flecha(
             x = __L,
-            y = __N, 
-            image = pygame.image.load(os.path.join(path_assets, 'seta_espadas.png')), 
+            y = __N,
+            image = pygame.image.load(os.path.join(path_assets, 'seta_espadas.png')),
             number = 4
         )
         self.corApertandoNO = (0,0,0)
         self.corApertandoSO = (0,0,0)
         self.corApertandoSL = (0,0,0)
         self.corApertandoNL = (0,0,0)
-        
+
         self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 2)
 
         # self.somCorreto = pygame.mixer.Sound(os.path.join(path_assets, ''))
-    
+
     def run(self):
-        # Mainloop            
+        # Mainloop
         input = 0
+        self.points = 0
+        self.feedback = None
+
         relogio = pygame.time.Clock()
-        
+
         pygame.mixer.music.load(os.path.join(path_assets, self.nomeMusica))
         pygame.mixer.music.play()
         while self.running:
@@ -87,7 +93,7 @@ class Jogo():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
                         self.running = False
-            
+
 
             # ----- Update -----
             if self.flechaNO.update() != 0:
@@ -98,35 +104,41 @@ class Jogo():
                 input = self.flechaSO.number # 3
             elif self.flechaSL.update() != 0:
                 input = self.flechaSL.number # 4
-            
+
 
             self.next.update()
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
-                # Deu boa :D
-                if 10 <= self.next.rect.y < 40:
-                    self.pontuacao += 1
+                if self.next.rect.y < 10:
+                    self.feedback = "Miss"
+                    self.points = 0
+                elif 10 <= self.next.rect.y < 40:
+                    self.feedback = "Too Fast"
+                    self.points = 1
                 elif 40 <= self.next.rect.y <= 60 or self.next.rect.y > 80:
-                    self.pontuacao += 5
+                    self.feedback = "Almost!"
+                    self.points = 5
                 elif 60 < self.next.rect.y <= 80:
-                    self.pontuacao += 10
+                    self.feedback = "Perfect!"
+                    self.points = 10
                     self.somCerto.play()
-                print(self.next.rect.y)
+
+                self.score += self.points
                 self.next.reset()
             elif input != 0:
-                # Deu ruim D:
+                self.feedback = "Miss"
+                self.points = 0
                 self.somErrado.play()
                 pass
-            input = 0
 
+            input = 0
 
             # ----- Render -----
             self.superficie.fill((self.fundo))
             self.superficie.blit(self.imagemMoldura, (0,0))
-            self.superficie.blit(self.fonte.render(f'Pontuação: {self.pontuacao}', True,(255,255,255)), (25,25))
+            self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25,25))
+            if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 60))
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
-            # self.superficie.blit(self.imagemKairos, (tamanho_tela[0]//2-135,400))
-            
 
             self.flechaNO.render(self.superficie)
             self.flechaNL.render(self.superficie)
