@@ -111,7 +111,10 @@ class Jogo:
         self.corApertandoNL = (0, 0, 0)
 
         self.next = sequencia.Sequencia(
-            tamanho_tela[0] // 2, -200, self.song["bpm"], self.song["offset"]
+            tamanho_tela[0]//2,
+            -200,
+            self.song['bpm'],
+            offset=self.song['offset']
         )
 
     def menu(self):
