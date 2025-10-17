@@ -5,7 +5,7 @@ from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
 import flecha
 import sequencia
-from settings import path_assets, tamanho_tela
+from settings import path_assets, tamanho_tela, fps
 
 class Jogo():
     def __init__(self):
@@ -40,13 +40,15 @@ class Jogo():
             'sangueferve': {
                 'name': 'Sidney Magal',
                 'file': 'sangueferve.mp3',
-                'bpm': 95
+                'bpm': 167.61,
+                'offset': 0.3
             },
-            'timmaia': {
-                'name': 'Tim Maia',
-                'file': 'timmaia.mp3',
-                'bpm': 139
-            }
+            # 'timmaia': {
+            #     'name': 'Tim Maia',
+            #     'file': 'timmaia.mp3',
+            #     'bpm': 139.53, # double beat
+            #     'offset': 0.35
+            # }
         }
         self.song = random.choice(list(songs.values()))
 
@@ -87,11 +89,17 @@ class Jogo():
         self.corApertandoSL = (0,0,0)
         self.corApertandoNL = (0,0,0)
 
-        self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 2)
+        self.next = sequencia.Sequencia(
+            tamanho_tela[0]//2,
+            -200,
+            self.song['bpm'],
+            self.song['offset']
+        )
 
     def menu(self):
         in_menu = True
-        relogio = pygame.time.Clock()
+        clock = pygame.time.Clock()
+
 
         button_width = 256
         button_height = 96
@@ -109,8 +117,7 @@ class Jogo():
         ranking_button_disabled.set_alpha(100)
 
         while in_menu and self.running:
-            relogio.tick(60)
-
+            clock.tick(60)
             for e in pygame.event.get():
                 if e.type == pygame.MOUSEBUTTONDOWN:
                     if start_button_rect.collidepoint(e.pos):
@@ -130,13 +137,18 @@ class Jogo():
         self.points = 0
         self.feedback = None
 
-        relogio = pygame.time.Clock()
+        clock = pygame.time.Clock()
 
         pygame.mixer.music.load(os.path.join(path_assets, self.song['file']))
         pygame.mixer.music.play()
 
+        # Initialize clock to prevent large first dt value
+        clock.tick()
+
         while self.running:
-            relogio.tick(60)
+            dt_ms = clock.tick(60)
+            dt = dt_ms / 1000.0
+
             # ----- Eventos -----
             for e in pygame.event.get():
                 if e.type == QUIT:
@@ -144,7 +156,6 @@ class Jogo():
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
                         self.running = False
-
 
             # ----- Update -----
             if self.flechaNO.update() != 0:
@@ -156,8 +167,7 @@ class Jogo():
             elif self.flechaSL.update() != 0:
                 input = self.flechaSL.number # 4
 
-
-            self.next.update()
+            self.next.update(dt)
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
                 if self.next.rect.y < 10:
@@ -188,8 +198,9 @@ class Jogo():
             self.superficie.fill(self.origin)
             self.superficie.blit(self.imagemMoldura, (0,0))
             self.superficie.blit(self.fonte.render(f"Song: {self.song['name']}", True, (255,255,255)), (25, 25))
-            self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25, 60))
-            if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 95))
+            self.superficie.blit(self.fonte.render(f"BPM: {self.song['bpm']}", True, (255,255,255)), (25, 60))
+            self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25, 95))
+            if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 130))
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
 
             self.flechaNO.render(self.superficie)
