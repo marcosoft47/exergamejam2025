@@ -24,7 +24,9 @@ class Jogo:
         self.points = 0
         self.score = 0
         self.feedback = None
-        self.superficie = pygame.display.set_mode(size=self.tamanho, display=0)
+        self.superficie = pygame.display.set_mode(
+            size=self.tamanho, flags=pygame.FULLSCREEN, display=1
+        )
 
         pygame.display.set_caption("exergamejam")
         self.origin = (0, 0, 0)
@@ -143,32 +145,26 @@ class Jogo:
         while in_menu and self.running:
             clock.tick(fps)
             self.load_camera()
-            self.set_feet_position()
-            x, y = (
-                self.pose_tracking.get_feet_center()
-            )  # Obtem posição(x,y) central do jogador
-            feet1_x, feet1_y = (
-                self.pose_tracking.get_feet1()
-            )  # Obtem posição(x,y) do pé esquerdo
-            feet2_x, feet2_y = (
-                self.pose_tracking.get_feet2()
-            )  # Obtem posição(x,y) do pé direito
+            self.get_feet_position()
+            self.cap.display_camera()  # Display AFTER skeleton is drawn
+
+            x, y = self.pose_tracking.get_feet_center()
+            left_foot_x, left_foot_y = self.pose_tracking.get_left_foot()
+            right_foot_x, right_foot_y = self.pose_tracking.get_right_foot()
+
+            # Show raw normalized coordinates too
+            if self.pose_tracking.pose_detected:
+                raw_l = f"({self.pose_tracking.feet1_x:.2f}, {self.pose_tracking.feet1_y:.2f})"
+                raw_r = f"({self.pose_tracking.feet2_x:.2f}, {self.pose_tracking.feet2_y:.2f})"
+            else:
+                raw_l = raw_r = "N/A"
 
             print(
-                "feet1_x: ",
-                feet1_x,
-                ", feet1_y: ",
-                feet1_y,
-                ", feet2_x: ",
-                feet2_x,
-                ", feet2_y: ",
-                feet2_y,
-            )
-            print(
-                "x: ",
-                x,
-                ", y: ",
-                y,
+                f"Pose: {self.pose_tracking.pose_detected} | "
+                f"InCal: {self.pose_tracking.feet_in_calibration_area} | "
+                f"Center: ({x}, {y}) | "
+                f"Left: ({left_foot_x}, {left_foot_y}) raw:{raw_l} | "
+                f"Right: ({right_foot_x}, {right_foot_y}) raw:{raw_r}"
             )
 
             for e in pygame.event.get():
@@ -177,6 +173,8 @@ class Jogo:
                         in_menu = False
                     if ranking_button_rect.collidepoint(e.pos):
                         in_menu = False
+                if e.type == KEYDOWN:
+                    if e.key == pygame.K_c:
                         calibrate.calibrar_ttea()
 
             self.superficie.fill(self.origin)
@@ -188,6 +186,33 @@ class Jogo:
             self.superficie.blit(
                 self.rankingButtonAsset, (ranking_button_x, ranking_button_y)
             )
+
+            # Draw circles around feet positions
+            if left_foot_x is not None and left_foot_y is not None:
+                # Blue filled circle for left foot
+                pygame.draw.circle(
+                    self.superficie,
+                    (0, 0, 255),
+                    (int(left_foot_x), int(left_foot_y)),
+                    30,
+                    0,
+                )
+
+            if right_foot_x is not None and right_foot_y is not None:
+                # Red filled circle for right foot
+                pygame.draw.circle(
+                    self.superficie,
+                    (255, 0, 0),
+                    (int(right_foot_x), int(right_foot_y)),
+                    30,
+                    0,
+                )
+
+            if x is not None and y is not None:
+                # Green filled circle for center
+                pygame.draw.circle(
+                    self.superficie, (0, 255, 0), (int(x), int(y)), 35, 0
+                )
 
             pygame.display.update()
 
@@ -288,9 +313,9 @@ class Jogo:
     def load_camera(self):
         self.cap.load_camera()
 
-    def set_feet_position(self):
+    def get_feet_position(self):
         self.cap.frame = self.pose_tracking.scan_feets(self.cap.frame)
-        (x, y) = self.pose_tracking.get_feet_center()
+        return self.pose_tracking.get_feet_center()
 
 
 if __name__ == "__main__":
