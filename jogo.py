@@ -1,4 +1,5 @@
 import os
+import random
 import pygame
 from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 
@@ -21,17 +22,22 @@ class Jogo():
         )
 
         pygame.display.set_caption('exergamejam')
-        self.fundo = (0,0,0)
+        self.origin = (0, 0, 0)
         self.fonte = pygame.font.SysFont('aakar', 35) # essa fonte NÃO funciona no windows
 
         self.imagemEsteira = pygame.image.load(os.path.join(path_assets, 'esteira-resize.png'))
         self.imagemMoldura = pygame.image.load(os.path.join(path_assets, 'fundo.png'))
         self.imagemKairos = pygame.image.load(os.path.join(path_assets, 'kairos_central.png'))
 
+        self.menuBackgroundAsset = pygame.image.load(os.path.join(path_assets, 'background_temple.png'))
+        self.startButtonAsset = pygame.image.load(os.path.join(path_assets, 'start.png'))
+        self.rankingButtonAsset = pygame.image.load(os.path.join(path_assets, 'ranking.png'))
+
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, 'snd_dumbvictory.wav'))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, 'snd_hurt1.wav'))
-        self.nomeMusica = 'sangueferve.mp3'
-        self.nomeMusica = 'timmaia.mp3'
+
+        songs = ['sangueferve.mp3', 'timmaia.mp3']
+        self.song = random.choice(songs)
 
         #  N
         # O L
@@ -72,7 +78,40 @@ class Jogo():
 
         self.next = sequencia.Sequencia(tamanho_tela[0]//2, -200, 2)
 
-        # self.somCorreto = pygame.mixer.Sound(os.path.join(path_assets, ''))
+    def menu(self):
+        in_menu = True
+        relogio = pygame.time.Clock()
+
+        button_width = 256
+        button_height = 96
+        button_spacing = 20
+
+        start_button_x = (self.tamanho[0] - button_width) // 2
+        start_button_y = (self.tamanho[1] - button_height) // 2 - (button_height // 2) - (button_spacing // 2)
+        start_button_rect = pygame.Rect(start_button_x, start_button_y, button_width, button_height)
+
+        ranking_button_x = (self.tamanho[0] - button_width) // 2
+        ranking_button_y = start_button_y + button_height + button_spacing
+
+        # Disabled for now
+        ranking_button_disabled = self.rankingButtonAsset.copy()
+        ranking_button_disabled.set_alpha(100)
+
+        while in_menu and self.running:
+            relogio.tick(60)
+
+            for e in pygame.event.get():
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    if start_button_rect.collidepoint(e.pos):
+                        in_menu = False
+
+            self.superficie.fill(self.origin)
+            self.superficie.blit(self.menuBackgroundAsset, (0, 0))
+
+            self.superficie.blit(self.startButtonAsset, (start_button_x, start_button_y))
+            self.superficie.blit(ranking_button_disabled, (ranking_button_x, ranking_button_y))
+
+            pygame.display.update()
 
     def run(self):
         # Mainloop
@@ -82,8 +121,9 @@ class Jogo():
 
         relogio = pygame.time.Clock()
 
-        pygame.mixer.music.load(os.path.join(path_assets, self.nomeMusica))
+        pygame.mixer.music.load(os.path.join(path_assets, self.song))
         pygame.mixer.music.play()
+
         while self.running:
             relogio.tick(60)
             # ----- Eventos -----
@@ -134,7 +174,7 @@ class Jogo():
             input = 0
 
             # ----- Render -----
-            self.superficie.fill((self.fundo))
+            self.superficie.fill(self.origin)
             self.superficie.blit(self.imagemMoldura, (0,0))
             self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25,25))
             if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 60))
@@ -153,7 +193,9 @@ class Jogo():
 
 if __name__ == "__main__":
     g = Jogo()
-    g.run()
+    g.menu()
+    if g.running:
+        g.run()
 
     pygame.quit()
     exit()
