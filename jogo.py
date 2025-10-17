@@ -36,8 +36,19 @@ class Jogo():
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, 'snd_dumbvictory.wav'))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, 'snd_hurt1.wav'))
 
-        songs = ['sangueferve.mp3', 'timmaia.mp3']
-        self.song = random.choice(songs)
+        songs = {
+            'sangueferve': {
+                'name': 'Sidney Magal',
+                'file': 'sangueferve.mp3',
+                'bpm': 95
+            },
+            'timmaia': {
+                'name': 'Tim Maia',
+                'file': 'timmaia.mp3',
+                'bpm': 139
+            }
+        }
+        self.song = random.choice(list(songs.values()))
 
         #  N
         # O L
@@ -121,7 +132,7 @@ class Jogo():
 
         relogio = pygame.time.Clock()
 
-        pygame.mixer.music.load(os.path.join(path_assets, self.song))
+        pygame.mixer.music.load(os.path.join(path_assets, self.song['file']))
         pygame.mixer.music.play()
 
         while self.running:
@@ -176,8 +187,9 @@ class Jogo():
             # ----- Render -----
             self.superficie.fill(self.origin)
             self.superficie.blit(self.imagemMoldura, (0,0))
-            self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25,25))
-            if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 60))
+            self.superficie.blit(self.fonte.render(f"Song: {self.song['name']}", True, (255,255,255)), (25, 25))
+            self.superficie.blit(self.fonte.render(f'Score: {self.score}', True, (255,255,255)), (25, 60))
+            if self.feedback: self.superficie.blit(self.fonte.render(f'{self.feedback}', True, (255,255,255)), (25, 95))
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0]//2-75,-50))
 
             self.flechaNO.render(self.superficie)
