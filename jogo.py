@@ -93,7 +93,7 @@ class Jogo():
             tamanho_tela[0]//2,
             -200,
             self.song['bpm'],
-            self.song['offset']
+            offset=self.song['offset']
         )
 
     def menu(self):
