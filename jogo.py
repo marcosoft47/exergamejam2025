@@ -49,6 +49,7 @@ class Jogo:
             "sangueferve": {
                 "name": "Sidney Magal",
                 "file": "sangueferve.mp3",
+                # "file": "snd_dumbvictory.wav",
                 "bpm": 167.61,
                 "offset": 0.3,
             },
@@ -60,6 +61,7 @@ class Jogo:
             # }
         }
         self.song = random.choice(list(songs.values()))
+        self.musica_acabou = pygame.USEREVENT
 
         #  N
         # O L
@@ -117,6 +119,8 @@ class Jogo:
             (self.tamanho[1] - button_height) // 2
             - (button_height // 2)
             - (button_spacing // 2)
+            + button_height
+            + button_spacing
         )
         start_button_rect = pygame.Rect(
             start_button_x, start_button_y, button_width, button_height
@@ -171,6 +175,8 @@ class Jogo:
                 if e.type == KEYDOWN:
                     if e.key == pygame.K_c:
                         calibrate.calibrar_ttea()
+                    if e.key == pygame.K_ESCAPE:
+                        self.running = False
 
             self.superficie.fill(self.origin)
             self.superficie.blit(self.menuBackgroundAsset, (0, 0))
@@ -201,7 +207,7 @@ class Jogo:
         # Initialize clock to prevent large first dt value
         clock.tick()
 
-        while self.running:
+        while self.running and pygame.mixer.music.get_busy():
             dt_ms = clock.tick(fps)
             dt = dt_ms / 1000.0
 
@@ -274,7 +280,7 @@ class Jogo:
             self.superficie.fill(self.origin)
             self.superficie.blit(self.imagemMoldura, (0, 0))
             self.superficie.blit(
-                self.fonte.render(f"Song: {self.song['name']}", True, (255, 255, 255)),
+                self.fonte.render(f"Artista: {self.song['name']}", True, (255, 255, 255)),
                 (25, 25),
             )
             self.superficie.blit(
@@ -282,7 +288,7 @@ class Jogo:
                 (25, 60),
             )
             self.superficie.blit(
-                self.fonte.render(f"Score: {self.score}", True, (255, 255, 255)),
+                self.fonte.render(f"Pontuação: {self.score}", True, (255, 255, 255)),
                 (25, 95),
             )
             if self.feedback:
@@ -304,6 +310,27 @@ class Jogo:
 
 
             pygame.display.update()
+            
+
+    def finish(self):
+        clock = pygame.time.Clock()
+        count = 0
+        while count < 60*7:
+            clock.tick(60)
+            for e in pygame.event.get():
+                if e.type == KEYDOWN:
+                    if e.key == pygame.K_ESCAPE:
+                        self.running = False
+            self.superficie.fill(self.origin)
+            self.superficie.blit(self.imagemMoldura, (0, 0))
+            self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 80))
+            self.superficie.blit(self.fonte.render(f'Pontuação: {self.points}', True, (255,255,255)), (25, 115))
+
+            pygame.display.flip()
+            count += 1
+        count = 0
+        self.points = 0
+
 
     def load_camera(self):
         self.cap.load_camera()
@@ -363,9 +390,10 @@ class Jogo:
 
 if __name__ == "__main__":
     g = Jogo()
-    g.menu()
-    if g.running:
+    while g.running:
+        g.menu()
         g.run()
+        g.finish()
 
     pygame.quit()
     exit()
