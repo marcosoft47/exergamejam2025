@@ -114,12 +114,12 @@ class PoseTracking:
             self.pose_detected = True
 
             self.feet1_x, self.feet1_y = (
-                self.results.pose_landmarks.landmark[31].x,
-                self.results.pose_landmarks.landmark[31].y,
+                (self.results.pose_landmarks.landmark[31].x + self.results.pose_landmarks.landmark[29].x) / 2,
+                (self.results.pose_landmarks.landmark[31].y + self.results.pose_landmarks.landmark[29].y) / 2,
             )  # left_heel
             self.feet2_x, self.feet2_y = (
-                self.results.pose_landmarks.landmark[32].x,
-                self.results.pose_landmarks.landmark[32].y,
+                (self.results.pose_landmarks.landmark[32].x + self.results.pose_landmarks.landmark[30].x) / 2,
+                (self.results.pose_landmarks.landmark[32].y + self.results.pose_landmarks.landmark[30].y) / 2,
             )  # right_heel
 
             # Ponto medio entre os pes
