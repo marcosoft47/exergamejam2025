@@ -249,17 +249,14 @@ class Jogo:
             self.next.update(dt)
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
-                if self.next.rect.y < 10:
-                    self.feedback = "Miss"
-                    self.points = 0
-                elif 10 <= self.next.rect.y < 40:
-                    self.feedback = "Too Fast"
+                if 10 <= self.next.rect.y < 40:
+                    self.feedback = "Quase"
                     self.points = 1
-                elif 40 <= self.next.rect.y <= 60 or self.next.rect.y > 80:
-                    self.feedback = "Almost!"
+                elif 40 <= self.next.rect.y <= 55 or self.next.rect.y > 80:
+                    self.feedback = "Boa!"
                     self.points = 5
-                elif 60 < self.next.rect.y <= 80:
-                    self.feedback = "Perfect!"
+                elif 55 < self.next.rect.y <= 80:
+                    self.feedback = "Perfeito!!"
                     self.points = 10
                     self.somCerto.play()
 
