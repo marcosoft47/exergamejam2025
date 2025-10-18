@@ -43,7 +43,7 @@ class Sequencia():
                 return
 
         self.rect.y += int(self.speed * dt)
-        if self.rect.y >= 80:
+        if self.rect.y >= 90:
             self.reset()
 
     def reset(self):

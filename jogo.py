@@ -258,10 +258,10 @@ class Jogo:
                 if 10 <= self.next.rect.y < 40:
                     self.feedback = "Quase"
                     self.points = 1
-                elif 40 <= self.next.rect.y <= 55 or self.next.rect.y > 80:
+                elif 40 <= self.next.rect.y <= 55:
                     self.feedback = "Boa!"
                     self.points = 5
-                elif 55 < self.next.rect.y <= 80:
+                elif 55 < self.next.rect.y <= 90:
                     self.feedback = "Perfeito!!"
                     self.points = 10
                     self.somCerto.play()
@@ -324,12 +324,12 @@ class Jogo:
             self.superficie.fill(self.origin)
             self.superficie.blit(self.imagemMoldura, (0, 0))
             self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 80))
-            self.superficie.blit(self.fonte.render(f'Pontuação: {self.points}', True, (255,255,255)), (25, 115))
+            self.superficie.blit(self.fonte.render(f'Pontuação: {self.score}', True, (255,255,255)), (25, 115))
 
             pygame.display.flip()
             count += 1
         count = 0
-        self.points = 0
+        self.score = 0
 
 
     def load_camera(self):
