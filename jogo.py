@@ -162,13 +162,13 @@ class Jogo:
             else:
                 raw_l = raw_r = "N/A"
 
-            print(
-                f"Pose: {self.pose_tracking.pose_detected} | "
-                f"InCal: {self.pose_tracking.feet_in_calibration_area} | "
-                f"Center: ({x}, {y}) | "
-                f"Left: ({left_foot_x}, {left_foot_y}) raw:{raw_l} | "
-                f"Right: ({right_foot_x}, {right_foot_y}) raw:{raw_r}"
-            )
+            #print(
+            #    f"Pose: {self.pose_tracking.pose_detected} | "
+            #    f"InCal: {self.pose_tracking.feet_in_calibration_area} | "
+            #    f"Center: ({x}, {y}) | "
+            #    f"Left: ({left_foot_x}, {left_foot_y}) raw:{raw_l} | "
+            #    f"Right: ({right_foot_x}, {right_foot_y}) raw:{raw_r}"
+            #)
 
             # Check if feet center is over start button
             if x is not None and y is not None:

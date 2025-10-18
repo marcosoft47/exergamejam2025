@@ -155,8 +155,8 @@ altura_tela_controle = (
 )
 
 # Webcam resolution (will be set by Camera class)
-largura_webcam = 1920
-altura_webcam = 1080
+largura_webcam = 640
+altura_webcam = 480
 relacao_largura = (
     largura_projetor / largura_tela_controle
 )  # Esta relação é usada na correção de perspectiva.
