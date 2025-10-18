@@ -30,31 +30,19 @@ class Jogo:
 
         pygame.display.set_caption("exergamejam")
         self.origin = (0, 0, 0)
-        self.fonte = pygame.font.SysFont(
-            "aakar", 35
-        )  # essa fonte NÃO funciona no windows
+        self.fonte = pygame.font.SysFont("aakar", 35) 
 
         self.imagemEsteira = pygame.image.load(
             os.path.join(path_assets, "esteira-resize.png")
         )
         self.imagemMoldura = pygame.image.load(os.path.join(path_assets, "fundo.png"))
-        self.imagemKairos = pygame.image.load(
-            os.path.join(path_assets, "kairos_central.png")
-        )
+        self.imagemKairos = pygame.image.load(os.path.join(path_assets, "kairos_central.png"))
 
-        self.menuBackgroundAsset = pygame.image.load(
-            os.path.join(path_assets, "background_temple.png")
-        )
-        self.startButtonAsset = pygame.image.load(
-            os.path.join(path_assets, "start.png")
-        )
-        self.rankingButtonAsset = pygame.image.load(
-            os.path.join(path_assets, "ranking.png")
-        )
+        self.menuBackgroundAsset = pygame.image.load(os.path.join(path_assets, "background_temple.png"))
+        self.startButtonAsset = pygame.image.load(os.path.join(path_assets, "start.png"))
+        self.rankingButtonAsset = pygame.image.load(os.path.join(path_assets, "ranking.png"))
 
-        self.somCerto = pygame.mixer.Sound(
-            os.path.join(path_assets, "snd_dumbvictory.wav")
-        )
+        self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, "snd_dumbvictory.wav"))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, "snd_hurt1.wav"))
 
         songs = {
@@ -76,7 +64,6 @@ class Jogo:
         #  N
         # O L
         #  S
-
         __N = 220
         __S = 450
         __L = 490
@@ -191,36 +178,12 @@ class Jogo:
             self.superficie.blit(
                 self.startButtonAsset, (start_button_x, start_button_y)
             )
-            self.superficie.blit(
-                self.rankingButtonAsset, (ranking_button_x, ranking_button_y)
-            )
+            # self.superficie.blit(
+            #     self.rankingButtonAsset, (ranking_button_x, ranking_button_y)
+            # )
 
             # Draw circles around feet positions
-            if left_foot_x is not None and left_foot_y is not None:
-                # Blue filled circle for left foot
-                pygame.draw.circle(
-                    self.superficie,
-                    (0, 0, 255),
-                    (int(left_foot_x), int(left_foot_y)),
-                    30,
-                    0,
-                )
-
-            if right_foot_x is not None and right_foot_y is not None:
-                # Red filled circle for right foot
-                pygame.draw.circle(
-                    self.superficie,
-                    (255, 0, 0),
-                    (int(right_foot_x), int(right_foot_y)),
-                    30,
-                    0,
-                )
-
-            if x is not None and y is not None:
-                # Green filled circle for center
-                pygame.draw.circle(
-                    self.superficie, (0, 255, 0), (int(x), int(y)), 35, 0
-                )
+            self.draw_circle()
 
             pygame.display.update()
 
@@ -302,11 +265,11 @@ class Jogo:
 
                 self.score += self.points
                 self.next.reset()
-            elif input != 0:
-                self.feedback = "Miss"
-                self.points = 0
-                self.somErrado.play()
-                pass
+            # elif input != 0:
+            #     self.feedback = "Miss"
+            #     self.points = 0
+            #     self.somErrado.play()
+            #     pass
 
             input = 0
 
@@ -340,37 +303,43 @@ class Jogo:
             self.next.render(self.superficie)
 
             # Draw feet circles
-            x, y = self.pose_tracking.get_feet_center()
-            if left_foot_x is not None and left_foot_y is not None:
-                # Blue filled circle for left foot
-                pygame.draw.circle(
-                    self.superficie,
-                    (0, 0, 255),
-                    (int(left_foot_x), int(left_foot_y)),
-                    30,
-                    0,
-                )
+            self.draw_circle()
 
-            if right_foot_x is not None and right_foot_y is not None:
-                # Red filled circle for right foot
-                pygame.draw.circle(
-                    self.superficie,
-                    (255, 0, 0),
-                    (int(right_foot_x), int(right_foot_y)),
-                    30,
-                    0,
-                )
-
-            if x is not None and y is not None:
-                # Green filled circle for center
-                pygame.draw.circle(
-                    self.superficie, (0, 255, 0), (int(x), int(y)), 35, 0
-                )
 
             pygame.display.update()
 
     def load_camera(self):
         self.cap.load_camera()
+
+    def draw_circle(self):
+        x, y = self.pose_tracking.get_feet_center()
+        left_foot_x, left_foot_y = self.pose_tracking.get_left_foot()
+        right_foot_x, right_foot_y = self.pose_tracking.get_right_foot()
+        if left_foot_x is not None and left_foot_y is not None:
+            # Blue filled circle for left foot
+            pygame.draw.circle(
+                self.superficie,
+                (0, 0, 255),
+                (int(left_foot_x), int(left_foot_y)),
+                30,
+                0,
+            )
+
+        if right_foot_x is not None and right_foot_y is not None:
+            # Red filled circle for right foot
+            pygame.draw.circle(
+                self.superficie,
+                (255, 0, 0),
+                (int(right_foot_x), int(right_foot_y)),
+                30,
+                0,
+            )
+
+        if x is not None and y is not None:
+            # Green filled circle for center
+            pygame.draw.circle(
+                self.superficie, (0, 255, 0), (int(x), int(y)), 35, 0
+            )
 
     def get_feet_position(self):
         self.cap.frame = self.pose_tracking.scan_feets(self.cap.frame)
