@@ -313,23 +313,24 @@ class Jogo:
             
 
     def finish(self):
-        clock = pygame.time.Clock()
-        count = 0
-        while count < 60*7:
-            clock.tick(60)
-            for e in pygame.event.get():
-                if e.type == KEYDOWN:
-                    if e.key == pygame.K_ESCAPE:
-                        self.running = False
-            self.superficie.fill(self.origin)
-            self.superficie.blit(self.imagemMoldura, (0, 0))
-            self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 80))
-            self.superficie.blit(self.fonte.render(f'Pontuação: {self.score}', True, (255,255,255)), (25, 115))
+        if self.running:
+            clock = pygame.time.Clock()
+            count = 0
+            while count < 60*7:
+                clock.tick(60)
+                for e in pygame.event.get():
+                    if e.type == KEYDOWN:
+                        if e.key == pygame.K_ESCAPE:
+                            self.running = False
+                self.superficie.fill(self.origin)
+                self.superficie.blit(self.imagemMoldura, (0, 0))
+                self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 80))
+                self.superficie.blit(self.fonte.render(f'Pontuação: {self.score}', True, (255,255,255)), (25, 115))
 
-            pygame.display.flip()
-            count += 1
-        count = 0
-        self.score = 0
+                pygame.display.flip()
+                count += 1
+            count = 0
+            self.score = 0
 
 
     def load_camera(self):

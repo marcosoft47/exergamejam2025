@@ -5,6 +5,7 @@ from os.path import join
 
 class Sequencia():
     def __init__(self, x: int, y: int, bpm: int, offset: float = 0.0):
+        self.next = -1
         self.sortear()
         self.images = [
             pygame.image.load(join(path_assets, 'seta_copas_instrucao.png')),
@@ -32,7 +33,9 @@ class Sequencia():
 
     def sortear(self):
         ''' Sortea direções aleatórias'''
-        self.next = random.randint(1,4)
+        atual = self.next
+        while self.next == atual:
+            self.next = random.randint(1,4)
 
     def update(self, dt: float):
         if not self.started:
