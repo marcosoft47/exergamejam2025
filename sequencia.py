@@ -1,6 +1,6 @@
 import pygame
 import random
-from settings import path_assets
+from settings import path_assets, resource_path
 from os.path import join
 
 class Sequencia():
@@ -8,10 +8,10 @@ class Sequencia():
         self.next = -1
         self.sortear()
         self.images = [
-            pygame.image.load(join(path_assets, 'seta_copas_instrucao.png')),
-            pygame.image.load(join(path_assets, 'seta_paus_instrucao.png')),
-            pygame.image.load(join(path_assets, 'seta_ouros_instrucao.png')),
-            pygame.image.load(join(path_assets, 'seta_espadas_instrucao.png'))
+            pygame.image.load(resource_path(join(path_assets, 'seta_copas_instrucao.png'))),
+            pygame.image.load(resource_path(join(path_assets, 'seta_paus_instrucao.png'))),
+            pygame.image.load(resource_path(join(path_assets, 'seta_ouros_instrucao.png'))),
+            pygame.image.load(resource_path(join(path_assets, 'seta_espadas_instrucao.png')))
         ]
         self.rect = self.images[0].get_rect()
         self.rect.center = (x, y)

@@ -1,4 +1,5 @@
 import os
+import sys
 import pygame
 import numpy as np
 import cv2
@@ -6,6 +7,17 @@ import cv2
 
 pwd = os.path.dirname(__file__)
 path_assets = os.path.join(pwd, "assets")
+
+def resource_path(relative_path):
+    """ Retorna o caminho absoluto para o recurso, funciona para dev e para o PyInstaller """
+    try:
+        # PyInstaller cria uma pasta temp e armazena o caminho em _MEIPASS
+        base_path = sys._MEIPASS # type: ignore
+    except Exception:
+        # Se não estiver rodando via PyInstaller, use o caminho normal
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 tamanho_tela = 800, 600
 fps = 60

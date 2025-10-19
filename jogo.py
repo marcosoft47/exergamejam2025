@@ -6,7 +6,7 @@ from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 import flecha
 from pose_tracking import PoseTracking
 import sequencia
-from settings import path_assets, tamanho_tela, fps
+from settings import path_assets, tamanho_tela, fps, resource_path
 
 import calibrate
 from camera import Camera
@@ -32,15 +32,13 @@ class Jogo:
         self.origin = (0, 0, 0)
         self.fonte = pygame.font.SysFont("aakar", 35) 
 
-        self.imagemEsteira = pygame.image.load(
-            os.path.join(path_assets, "esteira-resize.png")
-        )
-        self.imagemMoldura = pygame.image.load(os.path.join(path_assets, "fundo.png"))
-        self.imagemKairos = pygame.image.load(os.path.join(path_assets, "kairos_central.png"))
+        self.imagemEsteira = pygame.image.load(resource_path(os.path.join(path_assets, "esteira-resize.png")))
+        self.imagemMoldura = pygame.image.load(resource_path(os.path.join(path_assets, "fundo.png")))
+        self.imagemKairos = pygame.image.load(resource_path(os.path.join(path_assets, "kairos_central.png")))
 
-        self.menuBackgroundAsset = pygame.image.load(os.path.join(path_assets, "background_temple.png"))
-        self.startButtonAsset = pygame.image.load(os.path.join(path_assets, "start.png"))
-        self.rankingButtonAsset = pygame.image.load(os.path.join(path_assets, "ranking.png"))
+        self.menuBackgroundAsset = pygame.image.load(resource_path(os.path.join(path_assets, "background_temple.png")))
+        self.startButtonAsset = pygame.image.load(resource_path(os.path.join(path_assets, "start.png")))
+        self.rankingButtonAsset = pygame.image.load(resource_path(os.path.join(path_assets, "ranking.png")))
 
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, "snd_dumbvictory.wav"))
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, "snd_hurt1.wav"))
@@ -73,25 +71,25 @@ class Jogo:
         self.flechaNO = flecha.Flecha(
             x=__O,
             y=__N,
-            image=pygame.image.load(os.path.join(path_assets, "seta_copas.png")),
+            image=pygame.image.load(resource_path(os.path.join(path_assets, "seta_copas.png"))),
             number=1,
         )
         self.flechaSO = flecha.Flecha(
             x=__O,
             y=__S,
-            image=pygame.image.load(os.path.join(path_assets, "seta_paus.png")),
+            image=pygame.image.load(resource_path(os.path.join(path_assets, "seta_paus.png"))),
             number=2,
         )
         self.flechaSL = flecha.Flecha(
             x=__L,
             y=__S,
-            image=pygame.image.load(os.path.join(path_assets, "seta_ouros.png")),
+            image=pygame.image.load(resource_path(os.path.join(path_assets, "seta_ouros.png"))),
             number=3,
         )
         self.flechaNL = flecha.Flecha(
             x=__L,
             y=__N,
-            image=pygame.image.load(os.path.join(path_assets, "seta_espadas.png")),
+            image=pygame.image.load(resource_path(os.path.join(path_assets, "seta_espadas.png"))),
             number=4,
         )
         self.corApertandoNO = (0, 0, 0)
