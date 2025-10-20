@@ -50,53 +50,10 @@ csv.register_dialect(
 ################################## SPRITES ######################################
 #################################################################################
 icone_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/icone.png'))
-atencao_perto_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/atencao_perto.png'))
-atencao_longe_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/atencao_longe.png'))
-trofeu_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/trofeu.png'))
-trofeu_25_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/trofeu_25.png'))
-trofeu_50_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/trofeu_50.png'))
-trofeu_75_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/trofeu_75.png'))
-triste_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/triste.png'))
-feliz_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/feliz.png'))
-vez_do_jogador_verde_1_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/vez_do_jogador_verde_1.png'))
-vez_do_jogador_verde_2_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/vez_do_jogador_verde_2.png'))
-base_com_pe_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/base_com_pe.png'))
-base_com_pe_verde_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/base_com_pe_verde.png'))
-base_com_pe_vermelho_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/base_com_pe_vermelho.png'))
-base_sem_pe_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/base_sem_pe.png'))
 avisos_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/avisos.png'))
 ajuda_f1_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/ajuda_F1.png'))
 instrucao_calibrar_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/calibrar.png'))
 calibracao_finalizada_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/calibracao_ok.png'))
-repetea_inciar_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/base_com_iniciar.png'))
-pausa_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/pause.png'))
-sem_sinal_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/sem_sinal.png'))
-tempo_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/tempo.png'))
-som_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/som.png'))
-hud_on_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/hud_on.png'))
-hud_off_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/hud_off.png'))
-posicionamento_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/posicionamento.png'))
-fase_abaixo_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/fase_abaixo.png'))
-fase_acima_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/fase_acima.png'))
-silhueta_perto_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/silhueta_perto.png'))
-silhueta_longe_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/silhueta_longe.png'))
-triagulo_longe_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/triangulo_selecionado_longe.png'))
-triagulo_longe_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/triangulo_selecionado_longe_ajuda.png'))
-retangulo_longe_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/retangulo_selecionado_longe.png'))
-retangulo_longe_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/retangulo_selecionado_longe_ajuda.png'))
-circulo_longe_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/circulo_selecionado_longe.png'))
-circulo_longe_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/circulo_selecionado_longe_ajuda.png'))
-quadrado_longe_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/quadrado_selecionado_longe.png'))
-quadrado_longe_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/quadrado_selecionado_longe_ajuda.png'))
-triagulo_perto_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/triangulo_selecionado_perto.png'))
-triagulo_perto_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/triangulo_selecionado_perto_ajuda.png'))
-retangulo_perto_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/retangulo_selecionado_perto.png'))
-retangulo_perto_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/retangulo_selecionado_perto_ajuda.png'))
-circulo_perto_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/circulo_selecionado_perto.png'))
-circulo_perto_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/circulo_selecionado_perto_ajuda.png'))
-quadrado_perto_selecionado_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/quadrado_selecionado_perto.png'))
-quadrado_perto_selecionado_ajuda_fig=pygame.image.load(resource_path('assets/Repetea_Figuras/quadrado_selecionado_perto_ajuda.png'))
-
 
 #################################################################################
 ################################## CORES & FONTES ###############################
@@ -302,14 +259,6 @@ def instrucao_calibrar():
 def ajuda_f1(): #Tela com as teclas de atalho
     global gameDisplay
     gameDisplay.blit(ajuda_f1_fig, (0, 0))
-
-def posicionamento():
-    global gameDisplay
-    gameDisplay.blit(posicionamento_fig, (0, 0))
-
-def sem_sinal():
-    global gameDisplay
-    gameDisplay.blit(sem_sinal_fig, (0, 0))
 
 def calibracao_ok():
     global gameDisplay

@@ -41,6 +41,7 @@ class Jogo:
         self.rankingButtonAsset = pygame.image.load(resource_path(os.path.join(path_assets, "ranking.png")))
 
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, "snd_dumbvictory.wav"))
+        self.somCerto.set_volume(0.2)
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, "snd_hurt1.wav"))
 
         songs = {
@@ -253,18 +254,22 @@ class Jogo:
             self.next.update(dt)
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
+                self.points = 0
                 if 10 <= self.next.rect.y < 40:
                     self.feedback = "Quase"
                     self.points = 1
                 elif 40 <= self.next.rect.y <= 55:
                     self.feedback = "Boa!"
                     self.points = 5
-                elif 55 < self.next.rect.y <= 90:
+                elif 55 < self.next.rect.y <= 95:
                     self.feedback = "Perfeito!!"
                     self.points = 10
                     self.somCerto.play()
 
                 self.score += self.points
+                self.next.reset()
+            if self.next.rect.y >= 100:
+                self.feedback = "Tarde Demais"
                 self.next.reset()
             # elif input != 0:
             #     self.feedback = "Miss"
@@ -395,4 +400,3 @@ if __name__ == "__main__":
         g.finish()
 
     pygame.quit()
-    exit()
