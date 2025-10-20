@@ -33,7 +33,16 @@ SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 CONTADOR = 0
 
 # Load calibration points from CSV if it exists
-csv_path = os.path.join(pwd, "calibracao.csv")
+if getattr(sys, 'frozen', False):
+    # Estamos rodando como EXECUTÁVEL (.exe ou binário Linux)
+    # 'sys.executable' é o caminho para o 'Giganda Divina.exe'
+    base_dir = os.path.dirname(os.path.abspath(sys.executable))
+else:
+    # Estamos rodando como SCRIPT (.py)
+    # '__file__' é o caminho para o 'jogo.py'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+csv_path = os.path.join(base_dir, "calibracao.csv")
 if os.path.exists(csv_path):
     try:
         import csv
