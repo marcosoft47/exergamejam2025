@@ -22,6 +22,7 @@ class Sequencia():
         # Time for 4 beats = 240/BPM seconds
         # Velocity (px/sec) = 270 / (240/BPM) = BPM * 1.125
         self.speed = bpm * 1.125
+        self.defaultSpeed = self.speed
 
         # Convert bars to seconds: bars * 4 beats/bar * 60/BPM
         self.bpm = bpm
@@ -53,3 +54,6 @@ class Sequencia():
 
     def render(self, surface: pygame.surface.Surface):
         surface.blit(self.images[self.next-1], (self.rect.x, self.rect.y))
+
+    def changeSpeed(self, factor: int, step = 0.2):
+        self.speed = self.defaultSpeed  + self.defaultSpeed * factor * step

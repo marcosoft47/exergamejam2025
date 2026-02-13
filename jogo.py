@@ -23,9 +23,12 @@ class Jogo:
         self.tamanho = tamanho_tela
         self.points = 0
         self.score = 0
+        self.streak = 0
+        self.changeSpeedThreshold = 8
+        self.speed = 0
         self.feedback = None
         self.superficie = pygame.display.set_mode(
-            size=self.tamanho, flags=pygame.FULLSCREEN, display=1
+            size=self.tamanho, flags=pygame.FULLSCREEN, display=0
         )
 
         pygame.display.set_caption("exergamejam")
@@ -254,23 +257,30 @@ class Jogo:
             self.next.update(dt)
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
-                self.points = 0
-                if 10 <= self.next.rect.y < 40:
+                if 10 <= self.next.rect.y < 40 or  100 < self.next.rect.y <= 130:
                     self.feedback = "Quase"
                     self.points = 1
-                elif 40 <= self.next.rect.y <= 55:
+                elif 40 <= self.next.rect.y <= 55 or 85 <= self.next.rect.y <= 100:
                     self.feedback = "Boa!"
                     self.points = 5
-                elif 55 < self.next.rect.y <= 95:
+                elif 55 < self.next.rect.y < 85:
                     self.feedback = "Perfeito!!"
                     self.points = 10
-                    self.somCerto.play()
-
+                    # self.somCerto.play() # Still can't find a not annoying sfx
+                
+                self.streak += 1
                 self.score += self.points
                 self.next.reset()
-            if self.next.rect.y >= 100:
-                self.feedback = "Tarde Demais"
+            
+            if self.next.rect.y > 130:
+                self.feedback = ""
                 self.next.reset()
+                self.streak -= 1
+                self.feedback = "Tarde demais!"
+            
+            if (self.streak % self.changeSpeedThreshold == 0):
+                self.speed = self.streak // self.changeSpeedThreshold
+                self.next.changeSpeed(self.speed)
             # elif input != 0:
             #     self.feedback = "Miss"
             #     self.points = 0
@@ -287,7 +297,7 @@ class Jogo:
                 (25, 25),
             )
             self.superficie.blit(
-                self.fonte.render(f"BPM: {self.song['bpm']}", True, (255, 255, 255)),
+                self.fonte.render(f"BPM: {self.speed}", True, (255, 255, 255)),
                 (25, 60),
             )
             self.superficie.blit(
