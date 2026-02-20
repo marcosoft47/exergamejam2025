@@ -3,7 +3,13 @@ import sys
 import pygame
 import numpy as np
 import cv2
+from typing import Literal
 
+
+#################################
+# Esse arquivo foi clonado do KarTEA para reaproveitar um tanto de coisas do calibrador
+# Tem muita variável lixo aqui. Alguém devia arrumar isso .-.
+#################################
 
 pwd = os.path.dirname(__file__)
 path_assets = os.path.join(pwd, "assets")
@@ -23,12 +29,11 @@ tamanho_tela = 800, 600
 fps = 60
 
 # Variáveis do Pygame
-WINDOW_NAME = "KarTEA"
+WINDOW_NAME = "Kairos"
 GAME_TITLE = WINDOW_NAME
 CAMERA = 0
 CAMERA_FLIP = 0
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
-
 
 CONTADOR = 0
 
@@ -143,6 +148,27 @@ FONTS["big"] = pygame.font.Font(None, 50)
 #
 
 MENU = "Inicial"
+
+
+modoJogo = 'classico'
+
+def setModo(modo: Literal['classico', 'ambos', 'direito', 'esquerdo']):
+    global modoJogo
+    modoJogo = modo
+
+def getModo(beautify = False):
+    if beautify:
+        if modoJogo == 'classico':
+            return 'Clássico'
+        if modoJogo == 'ambos':
+            return 'Ambos Pés'
+        if modoJogo == 'direito':
+            return 'Apenas Direito'
+        if modoJogo == 'esquerdo':
+            return 'Apenas Esquerdo'
+        return '???'
+    
+    return modoJogo
 
 #################################################################################
 ################################## CORES & FONTES ###############################

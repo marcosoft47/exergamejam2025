@@ -1,3 +1,5 @@
+# pyinstaller --onefile --name "Gingada Divina" --icon="assets/kairos_central.png" --hidden-import="mediapipe.solutions.pose" --hidden-import="mediapipe.solutions.pose_landmark" --add-data "assets;assets" --add-data "[caminho mediapipe];mediapipe" jogo.py
+
 import os
 import random
 import pygame
@@ -6,7 +8,7 @@ from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
 import flecha
 from pose_tracking import PoseTracking
 import sequencia
-from settings import path_assets, tamanho_tela, fps, resource_path
+from settings import path_assets, tamanho_tela, fps, resource_path, getModo, setModo
 
 import calibrate
 from camera import Camera
@@ -18,6 +20,11 @@ class Jogo:
 
         self.pose_tracking = PoseTracking()
         self.cap = Camera()
+
+        ########
+        # Metade das coisas aqui podem ir para settings.py
+        # Alguém devia resolver isso .-.
+        ########
 
         self.running = True
         self.tamanho = tamanho_tela
@@ -46,7 +53,6 @@ class Jogo:
         self.somCerto = pygame.mixer.Sound(os.path.join(path_assets, "snd_dumbvictory.wav"))
         self.somCerto.set_volume(0.2)
         self.somErrado = pygame.mixer.Sound(os.path.join(path_assets, "snd_hurt1.wav"))
-
         songs = {
             "sangueferve": {
                 "name": "Sidney Magal",
@@ -110,6 +116,7 @@ class Jogo:
 
     def menu(self):
         in_menu = True
+        modo = getModo(True)
         clock = pygame.time.Clock()
 
         button_width = 256
@@ -149,11 +156,11 @@ class Jogo:
             right_foot_x, right_foot_y = self.pose_tracking.get_right_foot()
 
             # Show raw normalized coordinates too
-            if self.pose_tracking.pose_detected:
-                raw_l = f"({self.pose_tracking.feet1_x:.2f}, {self.pose_tracking.feet1_y:.2f})"
-                raw_r = f"({self.pose_tracking.feet2_x:.2f}, {self.pose_tracking.feet2_y:.2f})"
-            else:
-                raw_l = raw_r = "N/A"
+            # if self.pose_tracking.pose_detected:
+            #     raw_l = f"({self.pose_tracking.feet1_x:.2f}, {self.pose_tracking.feet1_y:.2f})"
+            #     raw_r = f"({self.pose_tracking.feet2_x:.2f}, {self.pose_tracking.feet2_y:.2f})"
+            # else:
+            #     raw_l = raw_r = "N/A"
 
             #print(
             #    f"Pose: {self.pose_tracking.pose_detected} | "
@@ -175,6 +182,17 @@ class Jogo:
                     if ranking_button_rect.collidepoint(e.pos):
                         in_menu = False
                 if e.type == KEYDOWN:
+                    if e.key == pygame.K_1:
+                        setModo('classico')
+                    if e.key == pygame.K_2:
+                        setModo('ambos')
+                    if e.key == pygame.K_3:
+                        setModo('esquerdo')
+                    if e.key == pygame.K_4:
+                        setModo('direito')
+                    
+                    modo = getModo(True) 
+
                     if e.key == pygame.K_c:
                         calibrate.calibrar_ttea()
                     if e.key == pygame.K_ESCAPE:
@@ -186,6 +204,9 @@ class Jogo:
             self.superficie.blit(
                 self.startButtonAsset, (start_button_x, start_button_y)
             )
+
+            self.superficie.blit(self.fonte.render(f'Modo de Jogo: {modo}', True, (255,255,255)), (200, 200))
+
             # self.superficie.blit(
             #     self.rankingButtonAsset, (ranking_button_x, ranking_button_y)
             # )
@@ -200,11 +221,13 @@ class Jogo:
         input = 0
         self.points = 0
         self.feedback = None
+        self.next.sortear()
 
         clock = pygame.time.Clock()
 
         pygame.mixer.music.load(os.path.join(path_assets, self.song["file"]))
         pygame.mixer.music.play()
+
 
         # Initialize clock to prevent large first dt value
         clock.tick()
@@ -244,17 +267,30 @@ class Jogo:
             if input == 0:
                 # Check left foot
                 left_foot_input = self.check_foot_on_arrow(left_foot_x, left_foot_y)
-                if left_foot_input != 0:
+                right_foot_input = self.check_foot_on_arrow(right_foot_x, right_foot_y)
+
+                modo = getModo()
+                if modo == 'classico':
+                    if left_foot_input != 0: # Eu não lembro porque faz essa verificação. Averigue a situação
+                        input = left_foot_input
+                    else:
+                        # Check right foot
+                        if right_foot_input != 0:
+                            input = right_foot_input
+
+                elif modo == 'ambos':
+                    if left_foot_input != 0 and left_foot_input == right_foot_input:
+                        input = left_foot_input
+                
+                elif modo == 'esquerdo':
                     input = left_foot_input
-                else:
-                    # Check right foot
-                    right_foot_input = self.check_foot_on_arrow(
-                        right_foot_x, right_foot_y
-                    )
-                    if right_foot_input != 0:
-                        input = right_foot_input
+
+                elif modo == 'direito':
+                    input = right_foot_input
 
             self.next.update(dt)
+
+            
             # Verifica se foi apertado o botão certo
             if self.next.next == input:
                 if 10 <= self.next.rect.y < 40 or  100 < self.next.rect.y <= 130:
@@ -297,7 +333,7 @@ class Jogo:
                 (25, 25),
             )
             self.superficie.blit(
-                self.fonte.render(f"BPM: {self.speed}", True, (255, 255, 255)),
+                self.fonte.render(f"Velocidade: {self.speed}", True, (255, 255, 255)),
                 (25, 60),
             )
             self.superficie.blit(

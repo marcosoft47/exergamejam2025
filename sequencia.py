@@ -1,6 +1,6 @@
 import pygame
 import random
-from settings import path_assets, resource_path
+from settings import path_assets, resource_path, getModo
 from os.path import join
 
 class Sequencia():
@@ -34,9 +34,15 @@ class Sequencia():
 
     def sortear(self):
         ''' Sortea direções aleatórias'''
-        atual = self.next
-        while self.next == atual:
-            self.next = random.randint(1,4)
+        modo = getModo()
+        if modo == 'esquerdo':
+            self.next = random.choice([1,2])
+        elif modo == 'direito':
+            self.next = random.choice([3,4])
+        else:
+            atual = self.next
+            while self.next == atual:
+                self.next = random.randint(1,4)
 
     def update(self, dt: float):
         if not self.started:
