@@ -1,5 +1,4 @@
 # pyinstaller --onefile --name "Gingada Divina" --icon="assets/kairos_central.png" --hidden-import="mediapipe.solutions.pose" --hidden-import="mediapipe.solutions.pose_landmark" --add-data "assets;assets" --add-data "[caminho mediapipe];mediapipe" jogo.py
-# Reiniciar mesmo o next
 
 import os
 import random
