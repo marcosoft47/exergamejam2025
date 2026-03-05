@@ -30,3 +30,6 @@ class Flecha():
 	def render(self, surface: pygame.surface.Surface):
 		pygame.draw.rect(surface, self.corDestaque, (self.rect.x, self.rect.y,128,128))
 		surface.blit(self.image, (self.rect.x, self.rect.y))
+	
+	def getPos(self):
+		return self.rect.topleft

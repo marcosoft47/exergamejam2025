@@ -6,6 +6,11 @@ from os.path import join
 class Sequencia():
     def __init__(self, x: int, y: int, bpm: int, offset: float = 0.0):
         self.next = -1
+
+        self.pontos =  [[0,0], # Copas   / NO (Total, Acertos)
+                        [0,0], # Paus    / SO
+                        [0,0], # Ouros   / SL
+                        [0,0]] # Espadas / NL
         self.sortear()
         self.images = [
             pygame.image.load(resource_path(join(path_assets, 'seta_copas_instrucao.png'))),
@@ -57,9 +62,29 @@ class Sequencia():
     def reset(self):
         self.rect.y = -200
         self.sortear()
+    
+    def errou(self):
+        self.pontos[self.next-1][0] += 1
+        self.reset()
+    
+    def acertou(self):
+        self.pontos[self.next-1][0] += 1
+        self.pontos[self.next-1][1] += 1
+        self.reset()
 
     def render(self, surface: pygame.surface.Surface):
         surface.blit(self.images[self.next-1], (self.rect.x, self.rect.y))
 
     def changeSpeed(self, factor: int, step = 0.2):
         self.speed = self.defaultSpeed  + self.defaultSpeed * factor * step
+    
+    def hardreset(self):
+        self.reset()
+        self.pontos =  [[0,0], # Copas   / NO (Total, Acertos)
+                        [0,0], # Paus    / SO
+                        [0,0], # Ouros   / SL
+                        [0,0]] # Espadas / NL
+        self.changeSpeed(0)
+    
+    def getPercentage(self, idx: int) -> int:
+        return round(self.pontos[idx][1] / self.pontos[idx][0] * 100) if self.pontos[idx][0] != 0 else 100

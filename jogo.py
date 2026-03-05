@@ -1,9 +1,10 @@
 # pyinstaller --onefile --name "Gingada Divina" --icon="assets/kairos_central.png" --hidden-import="mediapipe.solutions.pose" --hidden-import="mediapipe.solutions.pose_landmark" --add-data "assets;assets" --add-data "[caminho mediapipe];mediapipe" jogo.py
+# Reiniciar mesmo o next
 
 import os
 import random
 import pygame
-from pygame.locals import QUIT, KEYDOWN, K_ESCAPE
+from pygame.locals import QUIT, KEYDOWN, K_ESCAPE, K_q
 
 import flecha
 from pose_tracking import PoseTracking
@@ -28,11 +29,8 @@ class Jogo:
 
         self.running = True
         self.tamanho = tamanho_tela
-        self.points = 0
         self.score = 0
-        self.streak = 0
         self.changeSpeedThreshold = 8
-        self.speed = 0
         self.feedback = None
         self.superficie = pygame.display.set_mode(
             size=self.tamanho, flags=pygame.FULLSCREEN, display=0
@@ -113,6 +111,7 @@ class Jogo:
             self.song['bpm'],
             offset=self.song['offset']
         )
+        self.totalAcertos = [[0,0],[0,0],[0,0],[0,0]]
 
     def menu(self):
         in_menu = True
@@ -219,11 +218,13 @@ class Jogo:
     def run(self):
         # Mainloop
         input = 0
-        self.points = 0
+        points = 0
+        streak = 0
         self.feedback = None
-        self.next.sortear()
+        self.next.hardreset()
 
         clock = pygame.time.Clock()
+        gaming = True
 
         pygame.mixer.music.load(os.path.join(path_assets, self.song["file"]))
         pygame.mixer.music.play()
@@ -232,17 +233,21 @@ class Jogo:
         # Initialize clock to prevent large first dt value
         clock.tick()
 
-        while self.running and pygame.mixer.music.get_busy():
+        while self.running and gaming:
             dt_ms = clock.tick(fps)
             dt = dt_ms / 1000.0
 
             # ----- Eventos -----
+            gaming = pygame.mixer.music.get_busy()
             for e in pygame.event.get():
                 if e.type == QUIT:
                     self.running = False
                 if e.type == KEYDOWN:
                     if e.key == K_ESCAPE:
                         self.running = False
+                    if e.key == K_q:
+                        pygame.mixer.music.stop()
+                        gaming = False
 
             # ----- Update camera and feet position -----
             self.load_camera()
@@ -295,31 +300,33 @@ class Jogo:
             if self.next.next == input:
                 if 10 <= self.next.rect.y < 40 or  100 < self.next.rect.y <= 130:
                     self.feedback = "Quase"
-                    self.points = 1
+                    points = 1
+                    self.next.acertou()
                 elif 40 <= self.next.rect.y <= 55 or 85 <= self.next.rect.y <= 100:
                     self.feedback = "Boa!"
-                    self.points = 5
+                    points = 5
+                    self.next.acertou()
                 elif 55 < self.next.rect.y < 85:
                     self.feedback = "Perfeito!!"
-                    self.points = 10
+                    points = 10
+                    self.next.acertou()
                     # self.somCerto.play() # Still can't find a not annoying sfx
                 
-                self.streak += 1
-                self.score += self.points
-                self.next.reset()
+                streak += 1
+                self.score += points
             
             if self.next.rect.y > 130:
                 self.feedback = ""
-                self.next.reset()
-                self.streak -= 1
+                streak -= 1
                 self.feedback = "Tarde demais!"
+                self.next.errou()
             
-            if (self.streak % self.changeSpeedThreshold == 0):
-                self.speed = self.streak // self.changeSpeedThreshold
-                self.next.changeSpeed(self.speed)
+            if (streak % self.changeSpeedThreshold == 0):
+                speed = streak // self.changeSpeedThreshold
+                self.next.changeSpeed(speed)
             # elif input != 0:
             #     self.feedback = "Miss"
-            #     self.points = 0
+            #     points = 0
             #     self.somErrado.play()
             #     pass
 
@@ -333,7 +340,7 @@ class Jogo:
                 (25, 25),
             )
             self.superficie.blit(
-                self.fonte.render(f"Velocidade: {self.speed}", True, (255, 255, 255)),
+                self.fonte.render(f"Velocidade: {speed}", True, (255, 255, 255)),
                 (25, 60),
             )
             self.superficie.blit(
@@ -347,11 +354,8 @@ class Jogo:
                 )
             self.superficie.blit(self.imagemEsteira, (tamanho_tela[0] // 2 - 75, -50))
 
-            self.flechaNO.render(self.superficie)
-            self.flechaNL.render(self.superficie)
-            self.flechaSO.render(self.superficie)
-            self.flechaSL.render(self.superficie)
-
+            
+            self.render_flechas()
             self.next.render(self.superficie)
 
             # Draw feet circles
@@ -359,8 +363,8 @@ class Jogo:
 
 
             pygame.display.update()
-            
 
+    
     def finish(self):
         if self.running:
             clock = pygame.time.Clock()
@@ -373,17 +377,48 @@ class Jogo:
                             self.running = False
                 self.superficie.fill(self.origin)
                 self.superficie.blit(self.imagemMoldura, (0, 0))
-                self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 80))
-                self.superficie.blit(self.fonte.render(f'Pontuação: {self.score}', True, (255,255,255)), (25, 115))
+                self.superficie.blit(self.fonte.render(f'Parabéns!!', True, (255,255,255)), (25, 25))
+                self.superficie.blit(self.fonte.render(f'Pontuação: {self.score}', True, (255,255,255)), (25, 60))
+                self.render_flechas()
+
+                NOPos = list(self.flechaNO.getPos())
+                NOPos[1] -= 35
+                NOPos = tuple(NOPos)
+                NOPct = self.next.getPercentage(0)
+
+                SOPos = list(self.flechaSO.getPos())
+                SOPos[1] -= 35
+                SOPos = tuple(SOPos)
+                SOPct = self.next.getPercentage(1)
+
+                SLPos = list(self.flechaSL.getPos())
+                SLPos[1] -= 35
+                SLPos = tuple(SLPos)
+                SLPct = self.next.getPercentage(2)
+
+                NLPos = list(self.flechaNL.getPos())
+                NLPos[1] -= 35
+                NLPos = tuple(NLPos)
+                NLPct = self.next.getPercentage(3)
+
+                self.superficie.blit(self.fonte.render(f'Acertos: {self.next.pontos[0][1]}/{self.next.pontos[0][0]} ({NOPct}%)', True, (255,255,255)), NOPos)
+                self.superficie.blit(self.fonte.render(f'Acertos: {self.next.pontos[1][1]}/{self.next.pontos[1][0]} ({SOPct}%)', True, (255,255,255)), SOPos)
+                self.superficie.blit(self.fonte.render(f'Acertos: {self.next.pontos[2][1]}/{self.next.pontos[2][0]} ({SLPct}%)', True, (255,255,255)), SLPos)
+                self.superficie.blit(self.fonte.render(f'Acertos: {self.next.pontos[3][1]}/{self.next.pontos[3][0]} ({NLPct}%)', True, (255,255,255)), NLPos)
 
                 pygame.display.flip()
                 count += 1
             count = 0
             self.score = 0
 
-
     def load_camera(self):
         self.cap.load_camera()
+
+    def render_flechas(self):
+        self.flechaNO.render(self.superficie)
+        self.flechaNL.render(self.superficie)
+        self.flechaSO.render(self.superficie)
+        self.flechaSL.render(self.superficie)
 
     def draw_circle(self):
         x, y = self.pose_tracking.get_feet_center()
