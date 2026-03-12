@@ -296,7 +296,7 @@ class Jogo:
 
             
             # Verifica se foi apertado o botão certo
-            if self.next.next == input:
+            if self.next.next == input and self.next.rect.y >= 10:
                 if 10 <= self.next.rect.y < 40 or  100 < self.next.rect.y <= 130:
                     self.feedback = "Quase"
                     points = 1
@@ -311,12 +311,12 @@ class Jogo:
                     self.next.acertou()
                     # self.somCerto.play() # Still can't find a not annoying sfx
                 
-                streak += 1
+                streak = streak + 1 if -2 <= speed < 2 else streak
                 self.score += points
             
             if self.next.rect.y > 130:
                 self.feedback = ""
-                streak -= 1
+                streak = streak - 1 if -2 < speed <= 2 else streak
                 self.feedback = "Tarde demais!"
                 self.next.errou()
             
