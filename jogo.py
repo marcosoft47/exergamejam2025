@@ -192,6 +192,7 @@ class Jogo:
                     modo = getModo(True) 
 
                     if e.key == pygame.K_c:
+                        self.cap.close_camera()
                         calibrate.calibrar_ttea()
                     if e.key == pygame.K_ESCAPE:
                         self.running = False
